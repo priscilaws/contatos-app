@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface Contact {
   id: string;
@@ -35,4 +35,5 @@ const contactsSlice = createSlice({
 
 export const { addContact, updateContact, deleteContact } =
   contactsSlice.actions;
+
 export default contactsSlice.reducer;
