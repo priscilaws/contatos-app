@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import {
-  addContact,
-  updateContact,
-  deleteContact,
-} from '../store/contactsSlice';
+import ContactList from './ContactList';
 
 const Container = styled.div`
   max-width: 400px;
@@ -40,9 +35,30 @@ const Button = styled.button`
   }
 `;
 
+interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
 function ContactForm() {
-  const dispatch = useAppDispatch();
-  const contacts = useAppSelector((state) => state.contacts.list);
+  // Lista fake inicial para teste
+  const [contacts, setContacts] = useState<Contact[]>([
+    {
+      id: '1',
+      name: 'João Silva',
+      email: 'joao@email.com',
+      phone: '1199999-9999',
+    },
+    {
+      id: '2',
+      name: 'Maria Souza',
+      email: 'maria@email.com',
+      phone: '1198888-8888',
+    },
+  ]);
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
 
@@ -52,10 +68,17 @@ function ContactForm() {
   };
 
   const handleSubmit = () => {
+    if (!form.name || !form.email || !form.phone) return;
+
     if (selectedId) {
-      dispatch(updateContact({ id: selectedId, ...form }));
+      setContacts((prev) =>
+        prev.map((contact) =>
+          contact.id === selectedId ? { ...contact, ...form } : contact,
+        ),
+      );
     } else {
-      dispatch(addContact(form));
+      const newContact = { id: Date.now().toString(), ...form };
+      setContacts((prev) => [...prev, newContact]);
     }
     resetForm();
   };
@@ -73,7 +96,7 @@ function ContactForm() {
   };
 
   const handleDelete = (id: string) => {
-    dispatch(deleteContact(id));
+    setContacts((prev) => prev.filter((contact) => contact.id !== id));
     if (selectedId === id) resetForm();
   };
 
@@ -109,18 +132,14 @@ function ContactForm() {
         </Button>
         {selectedId && <Button onClick={resetForm}>Cancelar</Button>}
       </div>
+
       <hr />
-      <ul>
-        {contacts.map((contact) => (
-          <li key={contact.id}>
-            <p>
-              {contact.name} - {contact.email} - {contact.phone}
-            </p>
-            <Button onClick={() => handleEdit(contact.id)}>Editar</Button>
-            <Button onClick={() => handleDelete(contact.id)}>Remover</Button>
-          </li>
-        ))}
-      </ul>
+
+      <ContactList
+        contacts={contacts}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </Container>
   );
 }
