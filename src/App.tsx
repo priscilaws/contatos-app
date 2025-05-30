@@ -1,20 +1,14 @@
-import SideBar from './containers/SideBar/sidebar'
-import GlobalStyle, { Container } from './styles'
-import TaskList from './containers/TaskList/task-list'
-import { Provider } from 'react-redux'
-
-import store from './store'
+import React from 'react';
+import { GlobalStyle } from './styles/index';
+import ContactForm from './components/ContactForm';
 
 function App() {
   return (
-    <Provider store={store}>
+    <div>
       <GlobalStyle />
-      <Container>
-        <SideBar />
-        <TaskList />
-      </Container>
-    </Provider>
-  )
+      <ContactForm />
+    </div>
+  );
 }
 
-export default App
+export default App;
